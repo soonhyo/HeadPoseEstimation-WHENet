@@ -40,9 +40,11 @@ def main(args):
     whenet = WHENet(snapshot=args.snapshot)
     yolo = YOLO(**vars(args))
     VIDEO_SRC = 0 if args.video == '' else args.video # if video clip is passed, use web cam
-    cap = cv2.VideoCapture(VIDEO_SRC)
+    cap = cv2.VideoCapture(0)
     print('cap info',VIDEO_SRC)
     ret, frame = cap.read()
+    print(cap.isOpened())
+
     fourcc = cv2.VideoWriter_fourcc(*'MJPG')
     out = cv2.VideoWriter(args.output, fourcc, 30, (frame.shape[1], frame.shape[0]))  # write the result to a video
 
@@ -68,7 +70,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='whenet demo with yolo')
-    parser.add_argument('--video', type=str, default='IMG_0176.mp4',         help='path to video file. use camera if no file is given')
+    parser.add_argument('--video', type=str, default='IMG_0176.mp4', help='path to video file. use camera if no file is given')
     parser.add_argument('--snapshot', type=str, default='WHENet.h5', help='whenet snapshot path')
     parser.add_argument('--display', type=str, default='simple', help='display all euler angle (simple, full)')
     parser.add_argument('--score', type=float, default=0.3, help='yolo confidence score threshold')

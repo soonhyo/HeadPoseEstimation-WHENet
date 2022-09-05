@@ -8,17 +8,19 @@ import colorsys
 from timeit import default_timer as timer
 
 import numpy as np
-from keras import backend as K
-from keras.models import load_model
-from keras.layers import Input
+from tensorflow.python.keras import backend as K
+from tensorflow.python.keras.models import load_model
+from tensorflow.python.keras.layers import Input
+import tensorflow as tf
 from PIL import Image, ImageFont, ImageDraw
 import yolo_v3
 from .model import yolo_eval, yolo_body, tiny_yolo_body
 from .utils import letterbox_image
 import os
-from keras.utils import multi_gpu_model
+from tensorflow.python.keras.utils.multi_gpu_utils import multi_gpu_model
 import cv2
 
+tf.compat.v1.disable_eager_execution()
 def data_file( filename ):
     """Prepend the path to the data subdirectory to filename"""
     return os.path.join( os.path.dirname(__file__), 'data', filename )
@@ -127,7 +129,7 @@ class YOLO(object):
             feed_dict={
                 self.yolo_model.input: image_data,
                 self.input_image_shape: [image.size[1], image.size[0]],
-                K.learning_phase(): 0
+                K.symbolic_learning_phase(): 0
             })
 
         print('Found {} boxes for {}'.format(len(out_boxes), 'img'))
@@ -200,7 +202,7 @@ class YOLO(object):
             feed_dict={
                 self.yolo_model.input: image_data,
                 self.input_image_shape: [image.size[1], image.size[0]],
-                K.learning_phase(): 0
+                K.symbolic_learning_phase(): 0
             })
         return out_boxes, out_scores, out_classes
 
